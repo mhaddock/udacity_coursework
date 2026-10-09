@@ -9207,7 +9207,7 @@ None
 <table>
 <thead>
 <tr>
-<th>Criteria</th>
+<th>criteria</th>
 <th>Threshold</th>
 </tr>
 </thead>
@@ -9479,35 +9479,51 @@ Plots reveal no large skews in health and demographic factor distribution when c
 <th></th>
 <th>p-value</th>
 <th>coefficient</th>
+<th>result</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td>Gender (female)</td>
+<td>0.963</td>
+<td>-0.0001</td>
+<td>FAIL</td>
+</tr>
+<tr>
 <td>FinancialAssistance</td>
 <td>&lt; 0.001</td>
 <td>+0.0309</td>
+<td>PASS</td>
 </tr>
 <tr>
 <td>Hypertension</td>
 <td>&lt; 0.001</td>
 <td>-0.0433</td>
+<td>PASS</td>
+</tr>
+<tr>
+<td>Diabetes</td>
+<td>0.972</td>
+<td>0.0002</td>
+<td>FAIL</td>
 </tr>
 <tr>
 <td>Alcoholism</td>
 <td>&lt; 0.001</td>
 <td>+0.0468</td>
+<td>PASS</td>
 </tr>
 </tbody>
 </table>
-<p>R-squared: 0.003</p>
+<p>R-squared: 0.003 - FAIL</p>
 <p>OLS linear regression indicates that Financial Assistance and Alcoholism have a statistically significant association with a small increase in patient no-show rates. Hypertension is associated with a small decrease.</p>
 <p>The overall combined effect of all factors is very small at 0.3% of variation in no-show behavior, below our threshold.</p>
 <p><strong>Results: Gender, FinancialAssistance, Hypertension, Diabetes, Alcoholism</strong></p>
 <table>
 <thead>
 <tr>
-<th>Criteria</th>
-<th>Result</th>
+<th>criteria</th>
+<th>result</th>
 </tr>
 </thead>
 <tbody>
@@ -9918,7 +9934,7 @@ PARQUE INDUSTRIAL                       1
 <th>minimum patients</th>
 <th>neighborhoods filtered</th>
 <th>joint-test p-value</th>
-<th>(R^2)</th>
+<th>result</th>
 </tr>
 </thead>
 <tbody>
@@ -9926,22 +9942,23 @@ PARQUE INDUSTRIAL                       1
 <td>50</td>
 <td>6</td>
 <td>3.78e-58</td>
-<td>0.007</td>
+<td>PASS</td>
 </tr>
 <tr>
 <td>100</td>
 <td>10</td>
 <td>6.29e-59</td>
-<td>0.007</td>
+<td>PASS</td>
 </tr>
 <tr>
 <td>200</td>
 <td>20</td>
 <td>1.64e-59</td>
-<td>0.007</td>
+<td>PASS</td>
 </tr>
 </tbody>
 </table>
+<p>R-squared: 0.007 - FAIL</p>
 <p>Across the minimum patient thresholds of 50, 100, and 200, the models consistently indicated that some neighborhoods have a statistically significant association with patient no-show rate.</p>
 <p>Using the 100 patient threshold, OLS linear regression indicates that 26 neighborhoods are associated. 5 were associated with a decrease in no-show rates and 21 with an increase.</p>
 <p>A joint F-test of Neighborhood as a whole reported a p-value which satisfied our criteria. However, the size of the effect is weak. The OLS regression reported an R^2 value of 0.007, indicating that 0.7% of the variation in patient no-show behavior is explained by Neighborhood. This is below our threshold of 1%.</p>
@@ -9949,8 +9966,8 @@ PARQUE INDUSTRIAL                       1
 <table>
 <thead>
 <tr>
-<th>Criteria</th>
-<th>Result</th>
+<th>criteria</th>
+<th>result</th>
 </tr>
 </thead>
 <tbody>
@@ -10616,6 +10633,7 @@ JARDIM CAMBURI, which was used as the baseline
 <th></th>
 <th>p-value</th>
 <th>coefficient</th>
+<th>result</th>
 </tr>
 </thead>
 <tbody>
@@ -10623,17 +10641,18 @@ JARDIM CAMBURI, which was used as the baseline
 <td>Age</td>
 <td>&lt; 0.001</td>
 <td>-0.0010</td>
+<td>PASS</td>
 </tr>
 </tbody>
 </table>
-<p>R-squared: 0.005</p>
+<p>R-squared: 0.005 - FAIL</p>
 <p>OLS linear regression indicates that Age has a statistically significant association with a small decrease in patient no-show rates. However, the size of the effect is very small. The model explains 0.5% of the variation in patient no-show rate, which is below our 1% threshold.</p>
 <p><strong>Results</strong></p>
 <table>
 <thead>
 <tr>
-<th>Criteria</th>
-<th>Result</th>
+<th>criteria</th>
+<th>result</th>
 </tr>
 </thead>
 <tbody>
@@ -10924,40 +10943,62 @@ The vast majority of patients report 0 handicaps (98.18%).</p>
 <th></th>
 <th>p-value</th>
 <th>coefficient</th>
+<th>result</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>NumHandicaps: 1</td>
+<td>NumHandicaps 1</td>
 <td>&lt; 0.001</td>
 <td>-0.0424</td>
+<td>PASS</td>
+</tr>
+<tr>
+<td>NumHandicaps 2</td>
+<td>0.632</td>
+<td>-0.0169</td>
+<td>FAIL</td>
+</tr>
+<tr>
+<td>NumHandicaps 3</td>
+<td>0.342</td>
+<td>0.1362</td>
+<td>FAIL</td>
+</tr>
+<tr>
+<td>NumHandicaps 4</td>
+<td>0.502</td>
+<td>0.1362</td>
+<td>FAIL</td>
 </tr>
 </tbody>
 </table>
+<p>Baseline category: NumHandicaps 0</p>
 <p>OLS linear regression indicates that a count of 1 handicap has a statistically significant association with a decrease in no-show rates.</p>
 <p>Due to the sparse data for patients with &gt; 1 handicap, the results for specific <code>NumHandicaps</code> values should be interpreted cautiously.</p>
 <p><strong>Joint Test</strong></p>
 <table>
 <thead>
 <tr>
-<th>joint-test p-value</th>
-<th>(R^2)</th>
+<th>p-value</th>
+<th>result</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>2.73e-3</td>
-<td>0.000 (rounded)</td>
+<td>.00273</td>
+<td>PASS</td>
 </tr>
 </tbody>
 </table>
+<p>R-squared: 0.000 (rounded)</p>
 <p>A joint F-test of <code>NumHandicaps</code> as a whole reported a p-value that clears our significance threshold. However, with a 0.000 (rounded) R-squared value, the effect is very weak and below our threshold for effect size.</p>
 <p><strong>Results</strong></p>
 <table>
 <thead>
 <tr>
-<th>Criteria</th>
-<th>Result</th>
+<th>criteria</th>
+<th>result</th>
 </tr>
 </thead>
 <tbody>
@@ -11301,7 +11342,7 @@ Name: count, dtype: int64
 <h4 id="Acceptance-Criteria">Acceptance Criteria<a class="anchor-link" href="#Acceptance-Criteria">¶</a></h4><table>
 <thead>
 <tr>
-<th>Criteria</th>
+<th>criteria</th>
 <th>Threshold</th>
 </tr>
 </thead>
@@ -11448,42 +11489,70 @@ show:      88207
 <table>
 <thead>
 <tr>
-<th>explanatory variable</th>
+<th></th>
 <th>p-value</th>
 <th>coefficient</th>
+<th>result</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td><code>sch_Tuesday</code></td>
+<td>0.205</td>
+<td>0.0286</td>
+<td>FAIL</td>
+</tr>
+<tr>
+<td><code>sch_Wednesday</code></td>
+<td>0.353</td>
+<td>0.0214</td>
+<td>FAIL</td>
+</tr>
+<tr>
+<td><code>sch_Thursday</code></td>
+<td>0.074</td>
+<td>0.0442</td>
+<td>FAIL</td>
+</tr>
+<tr>
 <td><code>sch_Friday</code></td>
-<td>0.0441</td>
+<td>0.044</td>
 <td>+0.0492</td>
+<td>PASS</td>
+</tr>
+<tr>
+<td><code>sch_Saturday</code></td>
+<td>0.090</td>
+<td>-1.7340</td>
+<td>FAIL</td>
 </tr>
 </tbody>
 </table>
+<p>Baseline category: <code>sch_Monday</code></p>
 <p>Logistic regression for scheduling day of week (<code>SchedulingDate_day_name</code>) indicates that, when compared to the baseline category Monday, Friday has a statistically significant association with an increase in appointment no-shows.</p>
 <p><strong>Joint Test</strong></p>
 <table>
 <thead>
 <tr>
-<th>joint-test p-value</th>
-<th>pseudo R^2</th>
+<th>p-value</th>
+<th>result</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>0.063289</td>
-<td>9.404e-05</td>
+<td>FAIL</td>
 </tr>
 </tbody>
 </table>
+<p>Pseudo R^2: 9.404e-05 - FAIL</p>
 <p>However, a joint test of <code>SchedulingDate_day_name</code> returned a p-value of 0.0633, indicating the variable as a whole doesn't have a statistically significant association with appointment no-shows. Additionally, its pseudo R^2 value is well below our threshold at 9.404e-05.</p>
 <p><strong>Result</strong></p>
 <table>
 <thead>
 <tr>
-<th>Criteria</th>
-<th>Result</th>
+<th>criteria</th>
+<th>result</th>
 </tr>
 </thead>
 <tbody>
@@ -11511,47 +11580,70 @@ show:      88207
 <table>
 <thead>
 <tr>
-<th>explanatory variable</th>
+<th></th>
 <th>p-value</th>
 <th>coefficient</th>
+<th>result</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td><code>apt_Tuesday</code></td>
+<td>0.129</td>
+<td>-0.0344</td>
+<td>FAIL</td>
+</tr>
+<tr>
 <td><code>apt_Wednesday</code></td>
-<td>0.0086</td>
+<td>0.009</td>
 <td>-0.0595</td>
+<td>PASS</td>
 </tr>
 <tr>
 <td><code>apt_Thursday</code></td>
-<td>0.0014</td>
+<td>0.001</td>
 <td>-0.0810</td>
+<td>PASS</td>
+</tr>
+<tr>
+<td><code>apt_Friday</code></td>
+<td>0.146</td>
+<td>0.0351</td>
+<td>FAIL</td>
+</tr>
+<tr>
+<td><code>apt_Saturday</code></td>
+<td>0.708</td>
+<td>0.1425</td>
+<td>FAIL</td>
 </tr>
 </tbody>
 </table>
+<p>Baseline category: <code>apt_Monday</code></p>
 <p>Logistic regression for appointment day of week (<code>AppointmentDate_day_name</code>) indicates that, when compared to the baseline category Monday, Wednesday and Thursday have a statistically significant association with a drop in appointment no-shows.</p>
 <p><strong>Joint Test</strong></p>
 <table>
 <thead>
 <tr>
-<th>joint-test p-value</th>
-<th>pseudo R^2</th>
+<th>p-value</th>
+<th>result</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>&lt; 0.001</td>
-<td>0.0002475</td>
+<td>PASS</td>
 </tr>
 </tbody>
 </table>
+<p>Pseudo R^2: 0.0002475 - FAIL</p>
 <p>A joint test of <code>AppointmentDate_day_name</code> indicates that the variable as a whole also has a statistically significant association with <code>NoShow</code> values. However, the pseudo R^2 value is well below our threshold indicating its effect is very weak.</p>
 <p><strong>Result</strong></p>
 <table>
 <thead>
 <tr>
-<th>Criteria</th>
-<th>Result</th>
+<th>criteria</th>
+<th>result</th>
 </tr>
 </thead>
 <tbody>
@@ -11943,23 +12035,25 @@ AppointmentDate_day_name joint test p-value: 0.000045
 <tr>
 <th>p-value</th>
 <th>coefficient</th>
+<th>result</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>&lt; 0.001</td>
 <td>+0.0259</td>
+<td>PASS</td>
 </tr>
 </tbody>
 </table>
-<p>Pseudo R^2: 0.03009</p>
-<p>Logistic regression for number of days (<code>num_days</code>) indicates that an increase in <code>num_days</code> has a statistically significant association with an increase in no-shows. Its pseudo R^2 value 0.03 is also above our threshold, indicating its effect on appointment no-shows is meaningfully large.</p>
+<p>Pseudo R^2: 0.03009 - PASS</p>
+<p>Logistic regression for number of days (<code>num_days</code>) indicates that an increase in <code>num_days</code> has a statistically significant association with an increase in no-shows. Its pseudo R^2 value 0.03 is also above our threshold, indicating its association with appointment no-shows is meaningfully large.</p>
 <p><strong>Result</strong></p>
 <table>
 <thead>
 <tr>
-<th>Criteria</th>
-<th>Result</th>
+<th>criteria</th>
+<th>result</th>
 </tr>
 </thead>
 <tbody>
@@ -12239,23 +12333,25 @@ num_days      0.0  0.025867
 <tr>
 <th>p-value</th>
 <th>coefficient</th>
+<th>result</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>&lt; 0.001</td>
 <td>-0.0914</td>
+<td>PASS</td>
 </tr>
 </tbody>
 </table>
-<p>Pseudo R^2: 0.0003561</p>
+<p>Pseudo R^2: 0.0003561 - FAIL</p>
 <p>Logistic regression for <code>SMS_received</code> indicates a statistically significant association with a decrease in appointment no-shows. However, Pseudo R^2 is very low and doesn't clear our threshold for an effect of meaningful size.</p>
 <p><strong>Result</strong></p>
 <table>
 <thead>
 <tr>
-<th>Criteria</th>
-<th>Result</th>
+<th>criteria</th>
+<th>result</th>
 </tr>
 </thead>
 <tbody>
@@ -12765,7 +12861,7 @@ explanatory variables
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h4 id="Question-2:-Conclusions">Question 2: Conclusions<a class="anchor-link" href="#Question-2:-Conclusions">¶</a></h4><p>Only appointment lead time (<code>num_days</code>) was found to meet our acceptance criteria for showing a sufficiently large statistically association with an appointment's no-show status.</p>
+<h4 id="Question-2:-Conclusions">Question 2: Conclusions<a class="anchor-link" href="#Question-2:-Conclusions">¶</a></h4><p>Only appointment lead time (<code>num_days</code>) was found to meet our acceptance criteria for showing a sufficiently large statistical association with an appointment's no-show status.</p>
 <table>
 <thead>
 <tr>
@@ -12794,8 +12890,7 @@ explanatory variables
 </table>
 <p><strong>Scheduling and Appointment Day of Week</strong></p>
 <p><code>SchedulingDate_day_name</code> was not found to be statistically significant in the joint test, although Friday individually was.</p>
-<p><code>AppointmentDate_day_name</code> was found to be statistically significant in the joint test, as was Wednesday and Thursday individually. It did not pass the effect size threshold however, with a pseudo R^2 well below 0.01.</p>
-<p>While several individual days were found to be statistically associated with an appointment's no-show status, neither variable <code>SchedulingDate_day_name</code> or <code>AppointmentDate_day_name</code> were significant as a whole.</p>
+<p><code>AppointmentDate_day_name</code> was found to be statistically significant in the joint test, as were Wednesday and Thursday individually. It did not pass the effect size threshold however, with a pseudo R^2 well below 0.01.</p>
 <p><strong>Appointment Lead Time</strong></p>
 <p>Among the data points recording logistical information about each appointment, only <code>num_days</code> or appointment lead time satisfied our acceptance criteria to be flagged as warranting further analysis.</p>
 <p><strong>SMS Reminder Message</strong></p>
@@ -12832,7 +12927,7 @@ explanatory variables
 <table>
 <thead>
 <tr>
-<th>Criteria</th>
+<th>criteria</th>
 <th>Threshold</th>
 </tr>
 </thead>
@@ -12861,17 +12956,32 @@ explanatory variables
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [47]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [48]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Running this cell will execute a bash command to convert this notebook to an .html file</span>
-<span class="c1">#!python -m nbconvert --to html Investigate_a_Dataset.ipynb</span>
+<span class="o">!</span>python<span class="w"> </span>-m<span class="w"> </span>nbconvert<span class="w"> </span>--to<span class="w"> </span>html<span class="w"> </span>Investigate_a_Dataset.ipynb
 </pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>[NbConvertApp] Converting notebook Investigate_a_Dataset.ipynb to html
+[NbConvertApp] WARNING | Alternative text is missing on 13 image(s).
+[NbConvertApp] Writing 2134231 bytes to Investigate_a_Dataset.html
+</pre>
 </div>
 </div>
 </div>
