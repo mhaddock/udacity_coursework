@@ -1,0 +1,540 @@
+[cell 0]
+Project: Investigate a Dataset - Medical Appointment No-Shows
+
+Table of Contents
+
+Introduction
+Data Wrangling
+Exploratory Data Analysis
+
+Question 1
+Question 2
+
+Conclusions
+
+[cell 1]
+Introduction
+
+[cell 2]
+Dataset Description 
+
+We will be analyzing a dataset containing information about medical appointments made between Nov 10, 2015 and June 8, 2016 in the city of Vitória, Brazil, with the aim of identifying factors that may be associated with missed appointments.
+
+The dataset was sourced from Kaggle: Medical Appointment No-Shows. It contains data on 100K+ medical appointments with information about each appointment and the patient. For this analysis, some columns have been renamed for clarity.
+
+| column name | description | original name |
+
+| PatientId | unique identifier for each patient |PatientId|
+| AppointmentId | unique identifier for each appointment |AppointmentID|
+| Gender | Male or Female |Gender|
+| SchedulingDate | date the appointment was created - reference |ScheduledDay|
+| AppointmentDate | date of the appointment - reference |AppointmentDay|
+| Age | age of the patient |Age|
+| Neighborhood | neighborhood of Vitória, Brazil where the appointment takes place |Neighbourhood|
+| FinancialAssistance | patient enrolled in Bolsa Família financial assistance program |Scholarship|
+| Hypertension | patient diagnosed with hypertension |Hipertension|
+| Diabetes | patient diagnosed with diabetes |Diabetes|
+| Alcoholism | patient diagnosed with alcoholism |Alcoholism|
+| NumHandicaps | number of handicaps reported by patient - reference |Handcap|
+| SMS_received | 1 or more appointment reminder text messages were sent to the patient |SMS_received|
+| NoShow | the patient missed the appointment |No-show|
+
+Expanded Dataset
+Additional columns have been added to the dataset, derived from the existing data
+| column name | description | derived from |
+
+| SchedulingDate_day_name | day of week the appointment was created | SchedulingDate |
+| AppointmentDate_day_name | day of week of the appointment | AppointmentDate |
+| num_days | number of days elapsed between appointment creation and appointment | AppointmentDate - SchedulingDate |
+| num_patient_appointments | number of appointments a patient has scheduled | count of rows with the same PatientId |
+| num_patient_NoShow | number of appointments a patient has missed | count of NoShow per PatientId |
+
+[cell 3]
+Question(s) for Analysis
+1. Do any of a patient demographic or health factors show a significant explanatory effect on the likelihood of a patient missing an appointment? - link
+1. Do any factors related to logistical information about the appointment show significant explanatory effects on the likelihood the appointment will be missed? - link
+
+[cell 4]
+Data Wrangling
+
+[cell 5]
+Environment Setup
+
+[cell 7]
+General Properties
+- 110527 records found
+- no empty fields found
+
+[cell 9]
+Data Cleaning
+Column naming
+Renaming columns for clarity - see Dataset Description for more info
+- AppointmentID --> AppointmentId for consistency
+- ScheduledDay --> SchedulingDate to better reflect data type
+- AppointmentDay --> AppointmentDate for clarity and to reflect data type
+- Neighbourhood --> Neighborhood (US English spelling)
+- Scholarship --> FinancialAssistance for clarity
+- Hipertension --> Hypertension (US English spelling)
+- Handcap --> NumHandicaps for clarity
+- No-show --> NoShow* for consistency and Python compatibility
+
+\*The variable name NoShow is an "inverted boolean", which is considered a bad practice (True means the appointment was missed - a negative condition). However, I chose not to fix this issue since it would change the meaning of a data point, and require flipping all the values. It would create confusion if and when this analysis were compared to the original data source.
+
+[cell 11]
+AppointmentId
+- no duplicate AppointmentIds found
+- AppointmentId set as the DataFrame index
+
+[cell 13]
+Gender
+- 2 values found in data: ["F", "M"] 
+- Gender converted to categorical datatype ["female", "male"]
+
+[cell 15]
+SchedulingDate and AppointmentDate
+- SchedulingDate and AppointmentDate converted to datetime datatype
+- time of day not recorded for AppointmentDate
+- time of day was recorded for SchedulingDate, but for our purposes this is not interesting information. SchedulingDate time of day has been erased to enable like-for-like comparison to AppointmentDate
+
+[cell 17]
+SchedulingDate_day_name, AppointmentDate_day_name
+- SchedulingDate_day_name and AppointmentDate_day_name were derived from appointment data and added to dataset
+
+[cell 19]
+num_days
+- num_days was derived from appointment data and added to dataset
+- appointments with a negative num_days value are considered invalid and have been removed
+
+[cell 21]
+Age
+- Dropped rows with invalid Age values Age < 0
+- Age == 0 assumed to be an infant
+- right-sized datatype
+
+[cell 23]
+Neighborhood
+
+- 81 unique neighborhoods
+- converted to categorical datatype
+
+[cell 25]
+Binary Data Types: Non-Categorical
+Converted binary columns ([0,1], ["Yes","No"]) to boolean
+- FinancialAssistance,
+- Hypertension,
+- Diabetes,
+- Alcoholism,
+- SMS_received,
+- NoShow
+
+[cell 27]
+NumHandicaps
+- right-size datatype to value range
+
+[cell 29]
+PatientId
+
+Out of 110,521 appointments, there are 62298 unique PatientId values, indicating there are a large number of patients with multiple appointments.
+
+- The number of appointments per PatientId ranges between 1 and 88
+- The number of No-Show appointments per PatientId ranges between 0 and 18
+- To simplify later analysis, the number of appointments made for each patient (num_patient_appointments) and the number of appointments a patient has missed (num_patient_NoShow) are derived from existing data and added for each patient.
+
+Appointments with duplicated PatientId were further examined for inconsistencies, and no differences were found across these demographic data points:
+- Gender
+- Hypertension
+- Diabetes
+- Alcoholism
+- numHandicaps
+- Neighborhood
+- FinancialAssistance
+
+With these considerations, it will be safe to filter out appointments with duplicate PatientIds when examining patient demographic information, so long as their show/no-show behavior is accurately preserved.
+
+[cell 31]
+Data Cleaning Results
+
+[cell 33]
+Exploratory Data Analysis
+
+Caveats
+
+- I have limited my selection of regression models to ones I have experience with in my coursework. Other models may exist that would produce superior results.
+
+[cell 34]
+Data preparation for linear and logistic regression analysis
+
+Below are the steps taken to make our dataset 'full-rank' for subsequent linear and logistic regression analysis.
+
+[cell 36]
+Utility Functions
+
+[cell 38]
+Question 1: Do any of a patient's demographic or health factors show a significant explanatory effect on the likelihood of a patient missing an appointment?
+
+We have previously verified that each patient's demographic and health factors remain constant across their appointments; _see Data Cleaning/PatientId_. However, whether a patient attends or misses a given appointment can vary, and the number of appointments scheduled per patient also varies across the dataset. 
+
+To prevent patients with multiple appointments from skewing the analysis, we treat each patient as a single observation and calculate the proportion of appointments missed:
+
+$$\text{p\_NoShow} = \frac{\text{num\_patient\_NoShow}}{\text{num\_patient\_appointments}}$$
+
+For simplicity we will group patients based on a p_NoShow value threshold
+
+| classification | threshold |
+
+| likely no-show | p_NoShow >= 0.5 |
+| likely show | p_NoShow < 0.5 |
+
+These groups are intended to be used as a classification rule, not a true predictive measure of a patient's behavior.
+
+[cell 40]
+Caveats
+
+- Each patient is treated equally when referencing their no-show rate. This could conceal differences between patients with few appointments and patients with many appointments.
+
+[cell 41]
+Patient demographic and health factors for analysis
+- Gender
+- Age
+- Neighborhood
+- FinancialAssistance
+- Hypertension
+- Diabetes
+- Alcoholism
+- NumHandicaps
+
+[cell 42]
+Show/No-Show behavior across all patients
+data: NoShow
+
+[cell 43]
+Analysis Summary
+Most patients (71.65%) never missed an appointment during the dataset's timeframe. However, 13.07% have missed every appointment they had scheduled. This leaves 15.27% of patients who missed some, but not all, of their appointments.
+
+The distribution of patients with a partial show/no-show rate slightly skews to the left with a mean no-show rate of ~43%. Nevertheless, there is a large peak at 50% accounting for 4557 out of the 9516 patients with a fractional no-show rate.
+
+[cell 44]
+Analysis
+
+[cell 46]
+Gender, Financial Assistance Program Enrollment, Hypertension, Diabetes, Alcoholism 
+data: Gender, FinancialAssistance, Hypertension, Diabetes, Alcoholism
+
+In this section we look into whether Gender, FinancialAssistance, Hypertension, Diabetes, or Alcoholism had a statistically significant association with missed appointments - individually or collectively.
+
+[cell 47]
+Analysis Summary
+There are no large skews in health and demographic factor distribution when comparing all patients to the set of 'likely no-show' patients
+
+Of the factors analyzed here, OLS linear regression indicates that Financial Assistance and Alcoholism are associated with a small increase in patient no-show rate, while Hypertension is associated with a small decrease. The effect, however, is very weak; the model explains only about 0.3% of the variation in patient no-show behavior.
+
+| significant predictor | p-value | coefficient |
+
+| FinancialAssistance | < 0.001 | +0.0309 |
+| Hypertension | < 0.001 | -0.0433 |
+| Alcoholism | < 0.001 | +0.0468 |
+
+R-squared: 0.003
+
+[cell 48]
+Analysis
+
+[cell 52]
+Neighborhood
+data: Neighborhood
+
+[cell 53]
+There are 81 neighborhoods recorded in the dataset. The number of patients per neighborhood varies significantly, from 1 to 4192 patients per neighborhood.
+
+Neighborhoods with few patients produce imprecise no-show-rate estimates and large standard errors when using OLS. To reduce this problem, we will filter neighborhoods below a minimum patient threshold.
+
+[cell 54]
+Caveats
+
+[cell 55]
+Many Neighborhoods
+
+- Due to large number of dummy variables, p-values may be noisy so this analysis should be seen an exploratory result rather than a definitive causal conclusion.
+
+Small Neighborhoods
+
+- Regressions were run using 50, 100, and 200 as the minimum patient threshold. Results were consistent across all three thresholds.
+- For simplicity, the rest of this section will use a 100 patient threshold to illustrate the results. All three are referenced in the analysis summary.
+- If needed, the threshold can be easily changed in the code block below and re-running the model.
+
+[cell 58]
+Analysis Summary
+
+Across minimum patient thresholds of 50, 100, and 200, the models consistently indicated an association between neighborhood and patient no-show rate. 
+
+Using the 100 patient threshold, OLS linear regression indicates that 26 neighborhoods are statistically associated with no-show rates. 5 were associated with a decrease and 21 with an increase.
+
+A joint F-test of Neighborhood as a whole reported a very low p-value, indicating a statistically significant association between patient no-show rate and Neighborhood as a whole. However, the effect is weak; the model explains only about 0.7% of the variation in patient no-show behavior.
+
+| minimum patients | neighborhoods filtered | F-statistic | joint-test p-value | (R^2) |
+
+| 50 | 6 | 6.314 | 3.78e-58 | 0.007 |
+| 100 | 10 | 6.609 | 6.29e-59 | 0.007 |
+| 200 | 20 | 7.382 | 1.64e-59 | 0.007 |
+
+[cell 59]
+Analysis
+
+The largest neighborhood, in terms of number of patients, was selected as the reference category to provide a relatively stable comparison group.
+
+[cell 61]
+Significant Predictors
+
+Using the 100 patient threshold, OLS linear regression indicates that 26 neighborhoods are statistically associated with no-show rates.
+
+[cell 64]
+Patient Age
+data: Age
+
+[cell 65]
+Analysis Summary
+
+A scatter plot of Age distribution by p_NoShow reveals no obvious correlation pattern.
+
+Viewing the data in buckets of "likely no-show" and "likely show", patients classified as "likely no-show" have a slightly lower median age than those classified as "likely show"
+
+| | count | mean | std | min | 25% | 50% | 75% | max |
+
+| All Patients | 62298 | 36.7055 | 23.5311 | 0.0 | 17.0 | _36.0_ | 56.0 | 115.0 | 
+| p_NoShow >= 0.5 | 13713 | 33.6264 | 22.1186 | 0.0 | 16.0 | _32.0_ | 51.0 | 115.0 | 
+| p_NoShow < 0.5 | 48585 | 37.5746 | 23.8430 | 0.0 | 17.0 | _38.0_ | 57.0 | 115.0 | 
+
+OLS linear regression indicates that Age is associated with a very small decrease in no-show rates. The effect, however, is very weak; the model explains only about 0.5% of the variation in patient no-show behavior.
+
+| predictor | p-value | coefficient |
+
+| Age | < 0.001 | -0.0010 |
+
+R-squared: 0.005
+
+[cell 66]
+Analysis
+
+[cell 69]
+Number of Reported Handicaps
+data: NumHandicaps
+
+Although NumHandicaps is numeric, there are only a few discrete values in the dataset (0–4). Modeling it as a numeric predictor would assume that each additional reported handicap is associated with the same change in a patient's no-show rate. Instead, we will treat it as categorical broken down into dummy variables, with 0 handicaps as the reference group, so each count can have a separate association with no-show rate.
+
+[cell 70]
+Caveats
+
+There are a very low number of patients with > 1 handicap (108 out of 62298 patients). This could be affecting the quality of the results from regression models.
+
+[cell 71]
+Analysis Summary
+
+The vast majority of patients report 0 handicaps (98.18%).
+
+OLS linear regression indicates that a count of 1 handicap is statistically associated with a decrease in no-show rates.
+
+| significant predictor | p-value | coefficient |
+
+| NumHandicaps: 1 | = 1 handicap, the results should be interpreted cautiously.
+
+[cell 72]
+Analysis
+
+[cell 78]
+Question 1: Conclusions
+
+Several patient demographic and health factors were identified as having some association with a change in a patient's p_NoShow value; both positive and negative. R-squared values were, however, consistently very low so they have limited explanatory power.
+
+Caveats:
+
+- Some categories with sparse data (low patient count neighborhoods and occurences of NumHandicap values >= 1) should be interpreted cautiously.
+- Interactions between factors were not tested and could be explored in future analysis.
+
+In conclusion, no single demographic or health factor was identified in this analysis that has strong explanatory power for patient no-show rates.
+
+[cell 79]
+Question 2: Do any factors related to logistical information about the appointment show significant explanatory effects on the likelihood the appointment will be missed?
+
+Appointment factors for analysis
+- SchedulingDate_day_name - day of week
+- AppointmentDate_day_name - day of week
+- num_days - number of days between SchedulingDate and AppointmentDate
+- SMS_received - was an SMS reminder sent to the patient for the appointment?
+
+[cell 80]
+Show/No-Show distribution across all appointments
+data: NoShow
+
+Of 110,521 appointments, most were attended by the patient: 88,207 (79.81%). 22,314 (20.19%) appointments were marked as no-show.
+
+[cell 83]
+Scheduling and Appointment Day of Week
+data: SchedulingDate_day_name, AppointmentDate_day_name
+
+[cell 84]
+Analysis Summary
+
+Most appointments were both scheduled and attended on weekdays, with a very small fraction on Saturday and none on Sunday.
+
+Comparing the scheduling and appointment days of week for No-Show appointments to all appointments, no obvious skews are observed in the graphs.
+
+Logistic regression for Scheduling day of week (SchedulingDate_day_name) indicated Friday has a positive association with appointment no-show when compared to Monday (the chosen baseline). However, a joint test of SchedulingDate_day_name returned a p-value of 0.0633, indicating the factor as a whole doesn't have a statistically significant association with NoShow values.
+
+| predictor | p-value | coefficient |
+
+| sch_Friday | 0.0441 | +0.0492 |
+| SchedulingDate_day_name | 0.0633 |  |
+
+Logistic regression for Appointment day of week (AppointmentDate_day_name) indicates Wednesday and Thursday have a negative association with appointment no-show compared to Monday (the chosen baseline). A joint test of AppointmentDate_day_name returned a < 0.0001 p-value, indicating the factor as a whole also has a statistically significant association with NoShow values.
+
+| predictor | p-value | coefficient |
+
+| apt_Wednesday | 0.0086 | -0.0595 |
+| apt_Thursday | 0.0014 | -0.0810 |
+| AppointmentDate_day_name | < 0.001  |  |
+
+[cell 85]
+Analysis
+
+[cell 90]
+Number of Days Between Scheduling and Visit
+data: num_days
+
+[cell 91]
+Analysis Summary
+
+The number of days (num_days) between scheduling and the visit tends to be longer for no-show appointments than for show appointments. The mean is more than 7 days longer for no-show appointments (15.8 days) than for show appointments (8.8 days), while the median is 9 days longer (11 vs 2 days).
+
+|  | mean | median |
+
+| All Appointments | 10.1843 | 4.0000 |
+| No-Show | 15.8355 | 11.0000 |
+| Show | 8.7548	| 2.0000 |
+
+A logistic regression model's coefficient for num_days indicates that longer gaps between scheduling and the visit are statistically associated with a higher likelihood of an appointment being a "no-show".
+
+| p-value | coefficient |
+
+| < 0.001 | +0.0259 |
+
+[cell 92]
+Analysis
+
+[cell 95]
+SMS Reminder Message
+data: SMS_received
+
+[cell 96]
+Analysis Summary
+
+SMS_received Distribution
+
+67.90% of all appointments did not include an SMS reminder message to the patient. However, 34.89% of all appointments were same-day, where an SMS reminder message would be of little utility. Indeed, the data shows that no SMS messages were sent for any same-day appointment.
+
+Therefore, in our analysis of associations between SMS_received and NoShow we filtered out same-day appointments from our model.
+
+|  | # of appointments | % of all appointments |
+
+| All | 110521 | 100% |
+| All, SMS received | 35482 | 32.10% |
+| All, no SMS | 75039 | 67.90% |
+| All, Same-day | 38562 | 34.89% |
+| Same-day, SMS received | 0 | 0% |
+| Same-day, no SMS | 38562 | 34.89% |
+
+NoShow and SMS_received
+
+Excluding same-day, when an SMS message was sent, 27.57% of appointments were no-show vs 29.44% when no SMS message was sent - a 1.87% difference in no-show rate.
+
+Additionally, a logistic regression model's coefficient for SMS_received indicates that an SMS reminder message is statistically associated with a lower odds of an appointment being a "no-show"
+
+| p-value | coefficient |
+
+| < 0.001 | -0.0914 |
+
+Appointment num_days Distribution by SMS_received
+
+A cursory investigation was done looking for hints at a relationship between SMS reminder message, Show/No-Show and appointment lead time. 
+
+Average lead time for 'show' appointments was 18.64 days when accompanied by an SMS reminder and 11.39 days when no SMS message was sent; an increase of 7.25 days. This may be evidence that an SMS reminder is associated with the show/no-show likelihood for appointments with longer lead times. However, this will require a more thorough analysis than was done here before any relationship can be confidently reported.
+
+Appointment: No-Show
+| NoShow == True | mean num_days | median num_days |
+
+| SMS | 20.00 | 15 |
+| No SMS | 14.68 | 9 |
+| diff w/SMS | +5.32 days | +6 days |
+
+Appointment: Show
+| NoShow == False | mean num_days | median num_days |
+
+| SMS | 18.64 | 14 |
+| No SMS | 11.39 | 5 |
+| diff w/SMS | +7.25 days | +9 days |
+
+[cell 97]
+Analysis
+
+[cell 98]
+SMS_received Distribution and Same-Day Appointments
+
+[cell 100]
+NoShow and SMS_Received
+
+[cell 102]
+Appointment num_days distribution by SMS_received
+
+[cell 105]
+Question 2: Conclusions
+
+Several appointment-related factors were statistically associated with no-show status:
+
+1. Appointment day of week was significant overall. Compared with Monday, Wednesday and Thursday were associated with lower odds of a no-show.
+2. Longer scheduling-to-appointment intervals were associated with higher odds of a no-show.
+3. Among non-same-day appointments, receiving an SMS reminder was associated with lower odds of a no-show.
+
+A cursory examination suggests that the relationship between lead time and no-show status may differ by SMS status; this warrants further investigation.
+
+[cell 106]
+Conclusions
+
+When analyzing the data from Kaggle: Medical Appointment No-Shows, the data points fell into two main categories:
+
+Health and demographic information about the patient
+
+- Gender
+- Age
+- Neighborhood
+- FinancialAssistance - patient enrolled in financial assistance program
+- Hypertension
+- Diabetes
+- Alcoholism
+- NumHandicaps - number of handicaps reported by patient
+
+Logistical information about the appointment
+
+  - SchedulingDate_day_name - day of week
+  - AppointmentDate_day_name - day of week
+  - num_days - number of days between SchedulingDate and AppointmentDate
+  - SMS_received - was an SMS reminder sent to the patient for the appointment?
+
+Results
+
+A Patient's health and demographic factors showed some positive and negative associations with patients’ no-show rates, but the OLS models had consistently low R-squared values, indicating limited explanatory power.
+
+A few of the data points regarding appointment logistics showed statistically significant negative associations with the no-show status of an appointment. Stated more plainly, they were associated with lower odds of a missed appointment.
+
+- Appointment day of week (AppointmentDate_day_name) of Wednesday and Thursday, compared with Monday
+- SMS reminder messages (SMS_received) for non-same day appointments
+
+Scheduling day of week (SchedulingDate_day_name) was not significant overall, despite Friday showing a positive association compared to Monday.
+
+num_days showed a statistically positive assocation with no-show, meaning longer lead times are associated with higher odds of a missed appointment.
+
+Caveats
+
+Synergistic relationships between health, demographic, or logistic factors may exist, but were unexplored here with the exception of a cursory investigation of possible relationships between num_days and SMS_received. Evidence to support further investigation was found in that case.
+
+In some cases, sparsity of data may have negative effects on the quality of the regression models, specifically Neighborhood and NumHandicaps
+
+Finally, I have limited my selection of regression models to ones I have experience with in my coursework. Other models may exist that would produce superior results.
