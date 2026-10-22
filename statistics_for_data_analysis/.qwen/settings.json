@@ -56,7 +56,23 @@
       "Bash(red.params.is_senior, *)",
       "Bash(dp *)",
       "Bash(1],)",
-      "Bash(red.params.male, *)"
+      "Bash(red.params.male, *)",
+      "Bash('salary_prediction_project.ipynb',as_version=4)",
+      "Bash(nb.cells,1)",
+      "Bash(df.dropna)",
+      "Bash(df.rename)",
+      "Bash(\"job title\":\"job_title\",\"years of experience\":\"years_experience\",\"salary\":\"salary\"}, *)",
+      "Bash(flag_words *)",
+      "Bash(w)",
+      "Bash(.astype)",
+      "Bash(ed.columns=[\"bachelors\",\"masters\",\"phd\"])",
+      "Bash(ed)",
+      "Bash(float)",
+      "Bash([0,1])",
+      "Bash(y,sm.add_constant)",
+      "Bash(1,6)",
+      "Bash(.fit().rsquared)",
+      "Bash(.abs)"
     ]
   },
   "$version": 4
