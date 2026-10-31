@@ -108,41 +108,38 @@ Linear regression of years_experience and these suspected variables indicated al
 
 However, a variance inflation factor test did not show any of the variables passing the > 10 inflation factor threshold. This suggests that our regression model would not be improved if we removed them.
 
-| suspected variable | coef | p-value | VIF | omit from regression? |
-| --- | --- | --- | --- | --- |
-| `masters` | 2.6187 | < 0.001 | 1.462968 | no |
-| `phd` | 7.2576 | < 0.001 | 1.650073 | no |
-| `is_director` | 11.5747 | < 0.001 | 2.251962 | no |
-| `is_senior` | 3.7267 | < 0.001 | 1.468272 | no |
-| `is_manager` | 2.7672 | < 0.001 | 1.166135 | no |
-
+suspected variable,coef,p-value,VIF,omit from regression?
+masters,2.6187,< 0.001,1.462968,no
+phd,7.2576,< 0.001,1.650073,no
+is_director,11.5747,< 0.001,2.251962,no
+is_senior,3.7267,< 0.001,1.468272,no
+is_manager,2.7672,< 0.001,1.166135,no
 
 ### slide 4
 Salary Linear Regression: Results
 
-The model returned an R-squared value of 0.916 indicating a good fit, explaining 91.6% of the variance of salary
+An Ordinary Least Squares linear regression model returned an R-squared value of 0.916 indicating a good fit, explaining 91.6% of the variance of salary
 
 R-squared:                       0.916
 
-                       coef    std err          t      P>|t|      [0.025      0.975]
-------------------------------------------------------------------------------------
-intercept         2.907e+04   1660.594     17.505      0.000    2.58e+04    3.23e+04
-male              7848.8370   1466.075      5.354      0.000    4965.796    1.07e+04
-years_experience  5081.2555    175.297     28.987      0.000    4736.533    5425.978
-masters           1.397e+04   2008.268      6.958      0.000       1e+04    1.79e+04
-phd               2.314e+04   2728.306      8.480      0.000    1.78e+04    2.85e+04
-is_director       2.505e+04   3461.875      7.237      0.000    1.82e+04    3.19e+04
-is_senior         1.435e+04   1799.292      7.973      0.000    1.08e+04    1.79e+04
-is_manager        4174.9452   1801.474      2.318      0.021     632.342    7717.549
-
-
-
-
+variable,coef,std err,P>|t|,0.025,0.975
+intercept,29068.37,1660.59,< 0.001,25802.81,32333.94
+male,7848.84,1466.08,< 0.001,4965.80,10731.88
+years_experience,5081.26,175.30,< 0.001,4736.53,5425.98
+masters,13972.69,2008.27,< 0.001,10023.42,17921.95
+phd,23137.04,2728.31,< 0.001,17771.82,28502.26
+is_director,25052.49,3461.87,< 0.001,18244.71,31860.28
+is_senior,14345.60,1799.29,< 0.001,10807.29,17883.92
+is_manager,4174.95,1801.47,0.021,632.34,7717.55
 
 ## Interpretation and Next Steps
 
 ### slide 1
-what are the most powerful predictors
+Years of Experience and Salary
+
++ $5081.26 per year of experience, holding all other variables constant
+95% confidence interval: $4736.53 - $5425.98
+
 
 ### slide 2
 what are the "cheapest" combinations of experience + education
