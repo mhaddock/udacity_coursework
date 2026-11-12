@@ -22,7 +22,6 @@ In this portion of the presentation, you should
 - remove variables from the model that are not statistically significant
 - identify how well the model fits the data
 
-
 ### Interpretation of Model Results
 
 In this portion of the presentation, you should choose two variables in the model and provide:
